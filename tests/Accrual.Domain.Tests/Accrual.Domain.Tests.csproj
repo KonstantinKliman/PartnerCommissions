@@ -19,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\Accrual.Domain\Accrual.Domain.csproj" />
+      <ProjectReference Include="..\..\src\Accrual\Accrual.Domain\Accrual.Domain.csproj" />
     </ItemGroup>
 
 </Project>
