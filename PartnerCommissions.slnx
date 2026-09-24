@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/Accrual.Domain/Accrual.Domain.csproj" />
+  <Project Path="tests/Accrual.Domain.Tests/Accrual.Domain.Tests.csproj" />
+</Solution>
