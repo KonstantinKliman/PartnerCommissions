@@ -1,10 +1,12 @@
-﻿namespace Accrual.Domain.Tests;
+﻿using Accrual.Domain.Commissions;
+
+namespace Accrual.Domain.Tests;
 
 public class CommissionCalculatorTests
 {
-    private static List<Guid> Chain(int n)
+    private static List<string> Chain(int n)
     {
-        return Enumerable.Range(0, n).Select(_ => Guid.NewGuid()).ToList();
+        return Enumerable.Range(0, n).Select(x => x.ToString()).ToList();
     }
 
     [Fact]
@@ -56,7 +58,7 @@ public class CommissionCalculatorTests
 
         for (var i = 0; i < 3; i++)
         {
-            Assert.Equal(chain[i], result[i].BeneficiaryId);
+            Assert.Equal(chain[i], result[i].BeneficiaryExternalId);
             Assert.Equal(i + 1, result[i].Level);
             Assert.Equal(SchemaType.Fibonacci, result[i].Schema);
         }

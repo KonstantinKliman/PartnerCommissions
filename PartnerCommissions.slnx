@@ -4,7 +4,10 @@
   </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/Accrual/">
+    <Project Path="src/Accrual/Accrual.Api/Accrual.Api.csproj" />
+    <Project Path="src/Accrual/Accrual.Application/Accrual.Application.csproj" />
     <Project Path="src/Accrual/Accrual.Domain/Accrual.Domain.csproj" />
+    <Project Path="src/Accrual/Accrual.Infrastructure/Accrual.Infrastructure.csproj" />
   </Folder>
   <Folder Name="/src/Users/">
     <Project Path="src/Users/Users.Api/Users.Api.csproj" />

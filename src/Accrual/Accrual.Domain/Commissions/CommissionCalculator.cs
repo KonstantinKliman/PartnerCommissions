@@ -1,10 +1,10 @@
-﻿namespace Accrual.Domain;
+﻿namespace Accrual.Domain.Commissions;
 
 public static class CommissionCalculator
 {
     public const int MaxDepth = 10;
 
-    public static List<CommissionLine> Calculate(decimal profit, List<Guid> partnersUpward, SchemaType schema)
+    public static List<CommissionLine> Calculate(decimal profit, List<string> partnersUpward, SchemaType schema)
     {
         if (profit <= 0)
             return [];
