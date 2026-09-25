@@ -65,6 +65,18 @@ public class EventsService(IAccrualDbContext context, IUsersClient usersClient, 
         return eventItem?.ToDto() ?? throw new NotFoundException($"Event '{externalId}' not found.");
     }
 
+    public async Task<List<EventSummaryDto>> GetUserEventsAsync(string userExternalId, int page, int pageSize, CancellationToken ct)
+    {
+        return await context.Events
+            .Where(e => e.UserExternalId == userExternalId)
+            .OrderByDescending(e => e.CreatedAt)
+            .ThenByDescending(e => e.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(e => new EventSummaryDto(e.ExternalId, e.Profit, e.CreatedAt))
+            .ToListAsync(ct);
+    }
+
     private static void ThrowIfDataDifferent(Event eventItem, string userExternalId, decimal profit)
     {
         if (eventItem.UserExternalId != userExternalId || eventItem.Profit != profit)

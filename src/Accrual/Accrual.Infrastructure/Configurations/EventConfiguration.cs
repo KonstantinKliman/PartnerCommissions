@@ -13,7 +13,8 @@ public class EventConfiguration : IEntityTypeConfiguration<Event>
         builder.HasIndex(e => e.ExternalId)
             .IsUnique();
 
-        builder.HasIndex(e => e.UserExternalId);
+        builder.HasIndex(e => new { e.UserExternalId, e.CreatedAt, e.Id })
+            .IsDescending(false, true, true);
         
         builder.Property(e => e.Profit)
             .HasPrecision(18, 4);

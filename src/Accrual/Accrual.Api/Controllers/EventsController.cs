@@ -25,4 +25,11 @@ public class EventsController(IEventsService eventsService) : ControllerBase
         var result = await eventsService.GetEventByExternalIdAsync(externalId, ct);
         return Ok(result);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetEvents([FromQuery] GetEventsRequest request, CancellationToken ct)
+    {
+        var result = await eventsService.GetUserEventsAsync(request.UserExternalId, request.Page, request.PageSize, ct);
+        return Ok(result);
+    }
 }
