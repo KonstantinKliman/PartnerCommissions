@@ -29,4 +29,18 @@ public class UsersController(IUsersService usersService) : ControllerBase
         await usersService.SetPartnerAsync(externalId, request.PartnerExternalId, ct);
         return NoContent();
     }
+
+    [HttpGet("{externalId}/downline")]
+    public async Task<IActionResult> GetDownline([FromRoute] string externalId, CancellationToken ct)
+    {
+        var result = await usersService.GetDownlineAsync(externalId, ct);
+        return Ok(result);
+    }
+
+    [HttpGet("{externalId}/upline")]
+    public async Task<IActionResult> GetUpline([FromRoute] string externalId, CancellationToken ct)
+    {
+        var result = await usersService.GetUplineAsync(externalId, ct);
+        return Ok(result);
+    }
 }

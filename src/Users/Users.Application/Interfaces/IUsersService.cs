@@ -9,4 +9,8 @@ public interface IUsersService
     Task<UserDto> GetByExternalIdAsync(string externalId, CancellationToken ct);
     
     Task SetPartnerAsync(string externalId, string? partnerExternalId, CancellationToken ct);
+    
+    Task<List<TreeNodeDto>> GetDownlineAsync(string externalId, CancellationToken ct);
+    
+    Task<List<TreeNodeDto>> GetUplineAsync(string externalId, CancellationToken ct);
 }

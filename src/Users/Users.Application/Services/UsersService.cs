@@ -9,6 +9,11 @@ namespace Users.Application.Services;
 
 public class UsersService(IUsersDbContext context) : IUsersService
 {
+    /// <summary>
+    /// Максимальная глубина дерева
+    /// </summary>
+    private const int MaxTreeDepth = 10;
+    
     public async Task<UserDto> CreateAsync(string externalId, string? partnerExternalId, CancellationToken ct)
     {
         var userExists = await context.Users
@@ -104,5 +109,31 @@ public class UsersService(IUsersDbContext context) : IUsersService
         
         await context.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
+    }
+
+    public async Task<List<TreeNodeDto>> GetDownlineAsync(string externalId, CancellationToken ct)
+    {
+        var userId = await context.Users
+            .Where(u => u.ExternalId == externalId)
+            .Select(u => (Guid?)u.Id)
+            .FirstOrDefaultAsync(ct);
+
+        if (userId is null)
+            throw new NotFoundException($"User '{externalId}' not found.");
+
+        return await context.QueryDownlineAsync(userId.Value, MaxTreeDepth, ct);
+    }
+
+    public async Task<List<TreeNodeDto>> GetUplineAsync(string externalId, CancellationToken ct)
+    {
+        var userId = await context.Users
+            .Where(u => u.ExternalId == externalId)
+            .Select(u => (Guid?)u.Id)
+            .FirstOrDefaultAsync(ct);
+        
+        if (userId is null)
+            throw new NotFoundException($"User '{externalId}' not found.");
+        
+        return await context.QueryUplineAsync(userId.Value, MaxTreeDepth, ct);
     }
 }
