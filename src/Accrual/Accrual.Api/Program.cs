@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Accrual.Api.ExceptionHandlers;
 using Accrual.Application;
 using Accrual.Infrastructure;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,5 +28,15 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions()
+{
+    Predicate = _ => false,
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions()
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 app.Run();

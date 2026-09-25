@@ -13,6 +13,9 @@ public static class DependencyInjection
     {
         services.AddDbContext<AccrualDbContext>(opt => opt.UseNpgsql(config.GetConnectionString("DefaultConnection"))
             .UseSnakeCaseNamingConvention());
+        
+        services.AddHealthChecks()
+            .AddDbContextCheck<AccrualDbContext>(tags: ["ready"]);
 
         services.AddHttpClient<IUsersClient, UsersClient>(client =>
         {
