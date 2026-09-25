@@ -6,19 +6,19 @@ namespace Accrual.Api.Controllers;
 
 [ApiController]
 [Route("admin/schema")]
-public class AdminController(ISettingsService settingsService) : ControllerBase
+public class SchemaController(ISchemaService schemaService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetSchema(CancellationToken ct)
     {
-        var result = await settingsService.GetSchemaAsync(ct);
+        var result = await schemaService.GetCurrentAsync(ct);
         return Ok(result);
     }
 
     [HttpPut]
     public async Task<IActionResult> SetSchema([FromBody] SetSchemaRequest request, CancellationToken ct)
     {
-        await settingsService.SetSchemaAsync(request.SchemaType!.Value, ct);
+        await schemaService.SetAsync(request.SchemaType!.Value, ct);
         return NoContent();
     }
 }

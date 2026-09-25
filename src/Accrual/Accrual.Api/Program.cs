@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Accrual.Api.ExceptionHandlers;
 using Accrual.Application;
 using Accrual.Infrastructure;
 
@@ -14,12 +15,16 @@ builder.Services.AddOpenApi();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 

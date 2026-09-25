@@ -10,7 +10,7 @@ public interface IAccrualDbContext
     
     DbSet<Event> Events { get; }
     
-    DbSet<AccrualSettings> Settings { get; }
+    DbSet<SchemaChange> SchemaChanges { get; }
     
     DatabaseFacade Database { get; }
     

@@ -9,9 +9,6 @@ namespace Users.Application.Services;
 
 public class UsersService(IUsersDbContext context) : IUsersService
 {
-    /// <summary>
-    /// Максимальная глубина дерева
-    /// </summary>
     private const int MaxTreeDepth = 10;
     
     public async Task<UserDto> CreateAsync(string externalId, string? partnerExternalId, CancellationToken ct)

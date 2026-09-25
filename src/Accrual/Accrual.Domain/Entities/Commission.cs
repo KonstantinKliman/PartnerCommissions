@@ -1,4 +1,6 @@
-﻿namespace Accrual.Domain.Entities;
+﻿using Accrual.Domain.Commissions;
+
+namespace Accrual.Domain.Entities;
 
 public class Commission
 {
@@ -17,4 +19,12 @@ public class Commission
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     
     public DateTimeOffset? PaidAt { get; set; }
+    
+    public static Commission FromLine(CommissionLine line) => new()
+    {
+        BeneficiaryExternalId = line.BeneficiaryExternalId,
+        Level = line.Level,
+        Amount = line.Amount,
+        SchemaType = line.Schema
+    };
 }
