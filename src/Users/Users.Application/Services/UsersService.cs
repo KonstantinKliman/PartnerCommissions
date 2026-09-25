@@ -3,6 +3,7 @@ using Users.Application.Interfaces;
 using Users.Application.Dtos;
 using Users.Application.Exceptions;
 using Users.Domain.Entities;
+using Users.Domain.Exceptions;
 
 namespace Users.Application.Services;
 
@@ -20,10 +21,12 @@ public class UsersService(IUsersDbContext context) : IUsersService
         if (partnerExternalId is not null)
         {
             partnerId = await context.Users
-                            .Where(u => u.ExternalId == partnerExternalId)
-                            .Select(u => (Guid?)u.Id)
-                            .FirstOrDefaultAsync(ct)
-                        ?? throw new NotFoundException($"Partner '{partnerExternalId}' not found.");
+                .Where(u => u.ExternalId == partnerExternalId)
+                .Select(u => (Guid?)u.Id)
+                .FirstOrDefaultAsync(ct);
+            
+            if (partnerId is null)
+                throw new NotFoundException($"Partner '{partnerExternalId}' not found.");
         }
 
         var user = new User
@@ -58,5 +61,48 @@ public class UsersService(IUsersDbContext context) : IUsersService
         }
 
         return new UserDto(user.ExternalId, partnerExternalId, user.CreatedAt);
+    }
+
+    public async Task SetPartnerAsync(string externalId, string? partnerExternalId, CancellationToken ct)
+    {
+        await using var transaction = await context.Database.BeginTransactionAsync(ct);
+        await context.LockTreeAsync(ct);
+
+        var user = await context.Users
+            .FirstOrDefaultAsync(u => u.ExternalId == externalId, ct);
+        
+        if (user is null)
+            throw new NotFoundException($"User '{externalId}' not found.");
+
+        User? partner = null;
+        if (partnerExternalId is not null)
+        {
+            partner = await context.Users
+                .FirstOrDefaultAsync(u => u.ExternalId == partnerExternalId, ct);
+
+            if (partner is null)
+                throw new NotFoundException($"Partner '{partnerExternalId}' not found.");
+        }
+
+        if (partner is not null)
+        {
+            Guid? ancestorId = partner.Id;
+            while (ancestorId is not null)
+            {
+                if (ancestorId == user.Id)
+                    throw new DomainException("Setting this partner would create a cycle.");
+
+                var currentId = ancestorId;
+                ancestorId = await context.Users
+                    .Where(u => u.Id == currentId)
+                    .Select(u => u.PartnerId)
+                    .FirstOrDefaultAsync(ct);
+            }
+        }
+
+        user.PartnerId = partner?.Id;
+        
+        await context.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
     }
 }

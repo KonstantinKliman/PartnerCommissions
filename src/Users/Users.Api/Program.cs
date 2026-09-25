@@ -1,4 +1,4 @@
-using Users.Api.ExceptionHandling;
+using Users.Api.ExceptionHandlers;
 using Users.Application;
 using Users.Infrastructure;
 
@@ -21,8 +21,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
-
-app.UseAuthorization();
 
 app.MapControllers();
 

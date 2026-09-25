@@ -21,4 +21,12 @@ public class UsersController(IUsersService usersService) : ControllerBase
         var result = await usersService.GetByExternalIdAsync(externalId, ct);
         return Ok(result);
     }
+
+    [HttpPut("{externalId}/partner")]
+    public async Task<IActionResult> SetPartner([FromRoute] string externalId, [FromBody] SetPartnerRequest request,
+        CancellationToken ct)
+    {
+        await usersService.SetPartnerAsync(externalId, request.PartnerExternalId, ct);
+        return NoContent();
+    }
 }

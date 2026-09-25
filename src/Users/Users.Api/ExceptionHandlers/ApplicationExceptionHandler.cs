@@ -2,7 +2,7 @@
 using Users.Application.Exceptions;
 using Users.Domain.Exceptions;
 
-namespace Users.Api.ExceptionHandling;
+namespace Users.Api.ExceptionHandlers;
 
 public class ApplicationExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {

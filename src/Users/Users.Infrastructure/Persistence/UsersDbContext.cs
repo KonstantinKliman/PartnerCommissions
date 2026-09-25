@@ -10,6 +10,8 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
 {
     public DbSet<User> Users => Set<User>();
 
+    private const long TreeLockKey = 1_001;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(UsersDbContext).Assembly);
@@ -17,7 +19,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
         base.OnModelCreating(modelBuilder);
     }
 
-    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new())
     {
         try
         {
@@ -27,5 +29,10 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
         {
             throw new ConflictException("Entity already exists.", ex);
         }
+    }
+    
+    public Task LockTreeAsync(CancellationToken ct)
+    {
+        return Database.ExecuteSqlAsync($"SELECT pg_advisory_xact_lock({TreeLockKey})", ct);
     }
 }

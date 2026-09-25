@@ -7,4 +7,6 @@ public interface IUsersService
     Task<UserDto> CreateAsync(string externalId, string? partnerExternalId, CancellationToken ct);
 
     Task<UserDto> GetByExternalIdAsync(string externalId, CancellationToken ct);
+    
+    Task SetPartnerAsync(string externalId, string? partnerExternalId, CancellationToken ct);
 }

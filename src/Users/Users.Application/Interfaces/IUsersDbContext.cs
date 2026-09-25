@@ -7,6 +7,10 @@ namespace Users.Application.Interfaces;
 public interface IUsersDbContext
 {
     DbSet<User> Users { get; }
+    
     DatabaseFacade Database { get; }
+    
     Task<int> SaveChangesAsync(CancellationToken ct);
+
+    Task LockTreeAsync(CancellationToken ct);
 }
