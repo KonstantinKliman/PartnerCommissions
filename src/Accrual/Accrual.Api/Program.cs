@@ -1,9 +1,14 @@
+using System.Text.Json.Serialization;
 using Accrual.Application;
 using Accrual.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
+        new JsonStringEnumConverter(allowIntegerValues: false)));
+
+builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();

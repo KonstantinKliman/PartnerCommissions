@@ -16,10 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Accrual.Application\Accrual.Application.csproj" />
       <ProjectReference Include="..\Accrual.Infrastructure\Accrual.Infrastructure.csproj" />
     </ItemGroup>
