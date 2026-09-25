@@ -15,6 +15,12 @@
     <Project Path="src/Users/Users.Domain/Users.Domain.csproj" />
     <Project Path="src/Users/Users.Infrastructure/Users.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Wallets/">
+    <Project Path="src/Wallets/Wallets.Api/Wallets.Api.csproj" />
+    <Project Path="src/Wallets/Wallets.Application/Wallets.Application.csproj" />
+    <Project Path="src/Wallets/Wallets.Domain/Wallets.Domain.csproj" />
+    <Project Path="src/Wallets/Wallets.Infrastructure/Wallets.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Accrual.Domain.Tests/Accrual.Domain.Tests.csproj" />
   </Folder>
