@@ -1,4 +1,5 @@
 ﻿using Accrual.Application.Interfaces;
+using Accrual.Infrastructure.Clients;
 using Accrual.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -12,6 +13,15 @@ public static class DependencyInjection
     {
         services.AddDbContext<AccrualDbContext>(opt => opt.UseNpgsql(config.GetConnectionString("DefaultConnection"))
             .UseSnakeCaseNamingConvention());
+
+        services.AddHttpClient<IUsersClient, UsersClient>(client =>
+        {
+            var usersBaseUrl = config["Services:Users:BaseUrl"];
+            if (usersBaseUrl is null)
+                throw new InvalidOperationException("Services:Users:BaseUrl is not configured");
+            client.BaseAddress = new Uri(usersBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(5);
+        });
         
         services.AddScoped<IAccrualDbContext>(sp => sp.GetRequiredService<AccrualDbContext>());
         
