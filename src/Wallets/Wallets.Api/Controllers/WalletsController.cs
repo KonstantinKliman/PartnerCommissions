@@ -10,7 +10,10 @@ namespace Wallets.Api.Controllers;
 public class WalletsController(IWalletsService walletsService) : ControllerBase
 {
     [HttpPost("{userExternalId}/credits")]
-    public async Task<IActionResult> CreateCredit([FromRoute, MaxLength(128)] string userExternalId, [FromBody] CreateCreditRequest request, CancellationToken ct)
+    public async Task<IActionResult> CreateCredit(
+        [FromRoute, MaxLength(128)] string userExternalId, 
+        [FromBody] CreateCreditRequest request, 
+        CancellationToken ct)
     {
         var result = await walletsService.CreditAsync(
             userExternalId, request.CommissionId!.Value, request.EventExternalId, request.Amount!.Value, ct);
@@ -18,5 +21,22 @@ public class WalletsController(IWalletsService walletsService) : ControllerBase
         return result.IsCreated
             ? StatusCode(StatusCodes.Status201Created, result.Credit)
             : Ok(result.Credit);
+    }
+    
+    [HttpGet("{userExternalId}")]
+    public async Task<IActionResult> GetBalance([FromRoute, MaxLength(128)] string userExternalId, CancellationToken ct)
+    {
+        var result = await walletsService.GetBalanceAsync(userExternalId, ct);
+        return Ok(result);
+    }
+
+    [HttpGet("{userExternalId}/credits")]
+    public async Task<IActionResult> GetCredits(
+        [FromRoute, MaxLength(128)] string userExternalId,
+        [FromQuery] GetCreditsRequest request,
+        CancellationToken ct)
+    {
+        var result = await walletsService.GetCreditsAsync(userExternalId, request.Page, request.PageSize, ct);
+        return Ok(result);
     }
 }

@@ -64,7 +64,30 @@ public class WalletsService(IWalletsDbContext context) : IWalletsService
 
         return new CreditResult(credit.ToDto(), IsCreated: true);
     }
-    
+
+    public async Task<BalanceDto> GetBalanceAsync(string userExternalId, CancellationToken ct)
+    {
+        var balance = await context.Wallets
+            .Where(w => w.UserExternalId == userExternalId)
+            .SelectMany(w => w.Credits)
+            .SumAsync(c => c.Amount, ct);
+
+        return new BalanceDto(userExternalId, balance);
+    }
+
+    public async Task<List<CreditDto>> GetCreditsAsync(string userExternalId, int page, int pageSize, CancellationToken ct)
+    {
+        return await context.Wallets
+            .Where(w => w.UserExternalId == userExternalId)
+            .SelectMany(w => w.Credits)
+            .OrderByDescending(c => c.CreditedAt)
+            .ThenByDescending(c => c.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => new CreditDto(c.CommissionId, c.EventExternalId, c.Amount, c.CreditedAt))
+            .ToListAsync(ct);
+    }
+
     private static void ThrowIfDataDifferent(WalletCredit walletCredit, Guid? walletId, string eventExternalId, decimal amount)
     {
         if (walletCredit.WalletId != walletId || walletCredit.EventExternalId != eventExternalId || walletCredit.Amount != amount)
