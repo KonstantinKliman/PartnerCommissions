@@ -1,4 +1,5 @@
 ﻿using Accrual.Application.Interfaces;
+using Accrual.Application.Metrics;
 using Accrual.Application.Outbox;
 using Accrual.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,8 @@ public static class DependencyInjection
         
         services.AddScoped<ICommissionPayoutHandler, CommissionPayoutHandler>();
         services.AddScoped<IOutboxProcessor, OutboxProcessor>();
+
+        services.AddSingleton<AccrualMetrics>();
         
         return services;
     }

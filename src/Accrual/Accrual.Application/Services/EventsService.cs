@@ -2,13 +2,18 @@
 using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Mappings;
+using Accrual.Application.Metrics;
 using Accrual.Application.Outbox;
 using Accrual.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Accrual.Application.Services;
 
-public class EventsService(IAccrualDbContext context, IUsersClient usersClient, ISchemaService schemaService)
+public class EventsService(
+    IAccrualDbContext context, 
+    IUsersClient usersClient, 
+    ISchemaService schemaService,
+    AccrualMetrics metrics)
     : IEventsService
 {
     public async Task<CreateEventResult> CreateEventAsync(
@@ -58,9 +63,15 @@ public class EventsService(IAccrualDbContext context, IUsersClient usersClient, 
                 throw;
             
             ThrowIfDataDifferent(eventItem, userExternalId, profit);
+            
+            metrics.EventReceived(isCreated: false);
 
             return new CreateEventResult(eventItem.ToDto(), IsCreated: false);
         }
+        
+        metrics.EventReceived(isCreated: true);
+        foreach (var commission in newEvent.Commissions)
+            metrics.CommissionCreated(commission.SchemaType, commission.Amount);
 
         return new CreateEventResult(newEvent.ToDto(), IsCreated: true);
     }

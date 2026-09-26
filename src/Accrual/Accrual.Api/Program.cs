@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using Accrual.Api.ExceptionHandlers;
 using Accrual.Api.Workers;
 using Accrual.Application;
+using Accrual.Application.Metrics;
 using Accrual.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using OpenTelemetry.Exporter;
@@ -45,6 +46,7 @@ builder.Services.AddOpenTelemetry()
             
             reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 10_000;
         })
+        .AddMeter(AccrualMetrics.MeterName)
     );
 
 var app = builder.Build();
