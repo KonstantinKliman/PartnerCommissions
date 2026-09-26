@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using Wallets.Api.ExceptionHandlers;
 using Wallets.Application;
 using Wallets.Infrastructure;
@@ -13,6 +16,24 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(res => res.AddService("wallets"))
+    .WithMetrics(metricsBuilder => metricsBuilder
+        .AddAspNetCoreInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddOtlpExporter((exporter, reader) =>
+        {
+            var metricsEndpoint = builder.Configuration["Otlp:MetricsEndpoint"];
+            if (metricsEndpoint is null)
+                throw new InvalidOperationException("Otlp:MetricsEndpoint is not configured");
+
+            exporter.Endpoint = new Uri(metricsEndpoint);
+            exporter.Protocol = OtlpExportProtocol.HttpProtobuf;
+            
+            reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 10_000;
+        })
+    );
 
 var app = builder.Build();
 

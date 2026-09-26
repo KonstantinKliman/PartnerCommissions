@@ -4,6 +4,9 @@ using Accrual.Api.Workers;
 using Accrual.Application;
 using Accrual.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +26,26 @@ builder.Services.AddHostedService<OutboxWorker>();
 
 builder.Services.Configure<HostOptions>(opt =>
     opt.ShutdownTimeout = TimeSpan.FromSeconds(30));
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(res => res.AddService("accrual"))
+    .WithMetrics(metricsBuilder => metricsBuilder
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddMeter("Polly")
+        .AddOtlpExporter((exporter, reader) =>
+        {
+            var metricsEndpoint = builder.Configuration["Otlp:MetricsEndpoint"];
+            if (metricsEndpoint is null)
+                throw new InvalidOperationException("Otlp:MetricsEndpoint is not configured");
+
+            exporter.Endpoint = new Uri(metricsEndpoint);
+            exporter.Protocol = OtlpExportProtocol.HttpProtobuf;
+            
+            reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 10_000;
+        })
+    );
 
 var app = builder.Build();
 
