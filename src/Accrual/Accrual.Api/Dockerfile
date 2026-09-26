@@ -1,8 +1,10 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl \
+    && rm -rf /var/lib/apt/lists/*
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -12,15 +14,10 @@ COPY ["src/Accrual/Accrual.Application/Accrual.Application.csproj", "src/Accrual
 COPY ["src/Accrual/Accrual.Domain/Accrual.Domain.csproj", "src/Accrual/Accrual.Domain/"]
 COPY ["src/Accrual/Accrual.Infrastructure/Accrual.Infrastructure.csproj", "src/Accrual/Accrual.Infrastructure/"]
 RUN dotnet restore "src/Accrual/Accrual.Api/Accrual.Api.csproj"
-COPY . .
-WORKDIR "/src/src/Accrual/Accrual.Api"
-RUN dotnet build "./Accrual.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
-
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Accrual.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY src/Accrual/ src/Accrual/
+RUN dotnet publish "src/Accrual/Accrual.Api/Accrual.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish --no-restore /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Accrual.Api.dll"]
