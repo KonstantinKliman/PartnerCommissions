@@ -26,6 +26,15 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromSeconds(5);
         });
         
+        services.AddHttpClient<IWalletsClient, WalletsClient>(client =>
+        {
+            var walletsBaseUrl = config["Services:Wallets:BaseUrl"];
+            if (walletsBaseUrl is null)
+                throw new InvalidOperationException("Services:Wallets:BaseUrl is not configured");
+            client.BaseAddress = new Uri(walletsBaseUrl);
+            client.Timeout = TimeSpan.FromSeconds(5);
+        });
+        
         services.AddScoped<IAccrualDbContext>(sp => sp.GetRequiredService<AccrualDbContext>());
         
         return services;

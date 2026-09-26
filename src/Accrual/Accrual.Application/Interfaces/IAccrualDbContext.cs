@@ -18,4 +18,6 @@ public interface IAccrualDbContext
     DatabaseFacade Database { get; }
     
     Task<int> SaveChangesAsync(CancellationToken ct);
+    
+    Task<List<OutboxMessage>> LockPendingOutboxMessagesAsync(int batchSize, int maxAttempts, CancellationToken ct);
 }

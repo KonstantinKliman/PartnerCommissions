@@ -16,6 +16,23 @@ public class AccrualDbContext(DbContextOptions<AccrualDbContext> options) : DbCo
     public DbSet<SchemaChange> SchemaChanges => Set<SchemaChange>();
     
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
+    
+    public async Task<List<OutboxMessage>> LockPendingOutboxMessagesAsync(int batchSize, int maxAttempts, CancellationToken ct)
+    {
+        FormattableString query = $"""
+                     SELECT * FROM outbox_messages
+                     WHERE processed_at IS NULL
+                       AND attempts < {maxAttempts}
+                       AND next_attempt_at <= now()
+                     ORDER BY next_attempt_at
+                     LIMIT {batchSize}
+                     FOR UPDATE SKIP LOCKED
+                     """;
+        
+        return await OutboxMessages
+            .FromSql(query)
+            .ToListAsync(ct);
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

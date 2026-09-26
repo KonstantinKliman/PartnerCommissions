@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using Accrual.Api.ExceptionHandlers;
+using Accrual.Api.Workers;
 using Accrual.Application;
 using Accrual.Infrastructure;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -17,6 +18,8 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
+
+builder.Services.AddHostedService<OutboxWorker>();
 
 var app = builder.Build();
 
