@@ -62,4 +62,11 @@ public static class DependencyInjection
 
         return services;
     }
+    
+    public static async Task ApplyMigrationsAsync(this IServiceProvider services)
+    {
+        await using var scope = services.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<AccrualDbContext>();
+        await db.Database.MigrateAsync();
+    }
 }

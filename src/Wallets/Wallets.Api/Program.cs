@@ -39,6 +39,8 @@ builder.Services.AddOpenTelemetry()
 
 var app = builder.Build();
 
+await app.Services.ApplyMigrationsAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
