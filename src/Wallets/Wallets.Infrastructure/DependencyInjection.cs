@@ -13,6 +13,9 @@ public static class DependencyInjection
         services.AddDbContext<WalletsDbContext>(opt => opt.UseNpgsql(config.GetConnectionString("DefaultConnection"))
             .UseSnakeCaseNamingConvention());
 
+        services.AddHealthChecks()
+            .AddDbContextCheck<WalletsDbContext>(tags: ["ready"]);
+        
         services.AddScoped<IWalletsDbContext>(sp => sp.GetRequiredService<WalletsDbContext>());
         
         return services;

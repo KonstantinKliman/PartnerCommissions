@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Wallets.Api.ExceptionHandlers;
 using Wallets.Application;
 using Wallets.Infrastructure;
@@ -21,6 +22,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseExceptionHandler();
+
+app.MapHealthChecks("/health/live", new HealthCheckOptions()
+{
+    Predicate = _ => false,
+});
+
+app.MapHealthChecks("/health/ready", new HealthCheckOptions()
+{
+    Predicate = check => check.Tags.Contains("ready")
+});
 
 app.MapControllers();
 
