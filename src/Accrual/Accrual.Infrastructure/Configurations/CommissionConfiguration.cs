@@ -18,8 +18,5 @@ public class CommissionConfiguration : IEntityTypeConfiguration<Commission>
 
         builder.Property(c => c.SchemaType)
             .HasConversion<string>();
-
-        builder.HasIndex(c => c.CreatedAt)
-            .HasFilter("paid_at IS NULL");
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
+using Accrual.Application.Outbox;
 using Accrual.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
@@ -13,6 +14,8 @@ public class AccrualDbContext(DbContextOptions<AccrualDbContext> options) : DbCo
     public DbSet<Event> Events => Set<Event>();
     
     public DbSet<SchemaChange> SchemaChanges => Set<SchemaChange>();
+    
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

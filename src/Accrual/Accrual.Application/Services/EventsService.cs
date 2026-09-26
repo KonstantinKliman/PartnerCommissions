@@ -2,6 +2,7 @@
 using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Mappings;
+using Accrual.Application.Outbox;
 using Accrual.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,15 @@ public class EventsService(IAccrualDbContext context, IUsersClient usersClient, 
         var newEvent = Event.Create(externalId, userExternalId, profit, upline, schema.SchemaType);
 
         context.Events.Add(newEvent);
+        
+        foreach (var commission in newEvent.Commissions)
+        {
+            var payout = new CommissionPayoutMessage(
+                commission.Id, commission.BeneficiaryExternalId, newEvent.ExternalId, commission.Amount);
+
+            context.OutboxMessages.Add(OutboxMessage.Create(CommissionPayoutMessage.Type, payout));
+        }
+        
         try
         {
             await context.SaveChangesAsync(ct);

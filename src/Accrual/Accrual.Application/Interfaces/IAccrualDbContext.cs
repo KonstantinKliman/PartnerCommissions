@@ -1,4 +1,5 @@
-﻿using Accrual.Domain.Entities;
+﻿using Accrual.Application.Outbox;
+using Accrual.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -11,6 +12,8 @@ public interface IAccrualDbContext
     DbSet<Event> Events { get; }
     
     DbSet<SchemaChange> SchemaChanges { get; }
+    
+    DbSet<OutboxMessage> OutboxMessages { get; }
     
     DatabaseFacade Database { get; }
     
