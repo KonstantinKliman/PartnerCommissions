@@ -1,7 +1,11 @@
+using Wallets.Api.ExceptionHandlers;
 using Wallets.Application;
 using Wallets.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
@@ -15,6 +19,8 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 
