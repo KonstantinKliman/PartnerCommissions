@@ -30,8 +30,8 @@ public static class DependencyInjection
             {
                 opt.Retry.MaxRetryAttempts = 2;
                 opt.Retry.Delay = TimeSpan.FromMilliseconds(200);
-                opt.AttemptTimeout.Timeout = TimeSpan.FromSeconds(2);
-                opt.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(8);
+                opt.AttemptTimeout.Timeout = TimeSpan.FromSeconds(5);
+                opt.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(15);
                 opt.CircuitBreaker.SamplingDuration = TimeSpan.FromSeconds(10);
                 opt.CircuitBreaker.MinimumThroughput = 5;
                 opt.CircuitBreaker.FailureRatio = 0.5;
