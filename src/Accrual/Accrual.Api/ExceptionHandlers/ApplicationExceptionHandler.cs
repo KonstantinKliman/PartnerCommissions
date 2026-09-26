@@ -11,6 +11,7 @@ public class ApplicationExceptionHandler(IProblemDetailsService problemDetailsSe
         {
             NotFoundException => StatusCodes.Status404NotFound,
             ConflictException => StatusCodes.Status409Conflict,
+            ServiceNotAvailableException => StatusCodes.Status503ServiceUnavailable,
             _ => null
         };
 
