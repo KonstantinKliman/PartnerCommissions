@@ -4,6 +4,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using Wallets.Api.ExceptionHandlers;
 using Wallets.Application;
+using Wallets.Application.Metrics;
 using Wallets.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,7 @@ builder.Services.AddOpenTelemetry()
             
             reader.PeriodicExportingMetricReaderOptions.ExportIntervalMilliseconds = 10_000;
         })
+        .AddMeter(WalletsMetrics.MeterName)
     );
 
 var app = builder.Build();

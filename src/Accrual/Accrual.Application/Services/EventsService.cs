@@ -28,6 +28,8 @@ public class EventsService(
         {
             ThrowIfDataDifferent(existingEvent, userExternalId, profit);
             
+            metrics.EventReceived(isCreated: false);
+            
             return new CreateEventResult(existingEvent.ToDto(), IsCreated: false);
         }
 

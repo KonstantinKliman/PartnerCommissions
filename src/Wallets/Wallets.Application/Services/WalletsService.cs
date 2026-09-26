@@ -3,11 +3,12 @@ using Wallets.Application.Dtos;
 using Wallets.Application.Exceptions;
 using Wallets.Application.Interfaces;
 using Wallets.Application.Mappings;
+using Wallets.Application.Metrics;
 using Wallets.Domain.Entities;
 
 namespace Wallets.Application.Services;
 
-public class WalletsService(IWalletsDbContext context) : IWalletsService
+public class WalletsService(IWalletsDbContext context, WalletsMetrics metrics) : IWalletsService
 {
     public async Task<CreditResult> CreditAsync(
         string userExternalId, Guid commissionId, string eventExternalId, decimal amount, CancellationToken ct)
@@ -25,6 +26,8 @@ public class WalletsService(IWalletsDbContext context) : IWalletsService
 
             ThrowIfDataDifferent(existingWalletCredit, existingWalletId, eventExternalId, amount);
 
+            metrics.CreditDuplicate();
+            
             return new CreditResult(existingWalletCredit.ToDto(), IsCreated: false);
         }
 
@@ -59,9 +62,13 @@ public class WalletsService(IWalletsDbContext context) : IWalletsService
 
             ThrowIfDataDifferent(winner, userExternalIdWalletId, eventExternalId, amount);
 
+            metrics.CreditDuplicate();
+            
             return new CreditResult(winner.ToDto(), IsCreated: false);
         }
 
+        metrics.CreditCreated(amount);
+        
         return new CreditResult(credit.ToDto(), IsCreated: true);
     }
 
