@@ -9,20 +9,27 @@ public class OutboxWorker(IServiceScopeFactory scopeFactory, ILogger<OutboxWorke
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var timer = new PeriodicTimer(PollingInterval);
-
-        while (await timer.WaitForNextTickAsync(stoppingToken))
+        
+        try
         {
-            try
+            while (await timer.WaitForNextTickAsync(stoppingToken))
             {
-                await using var scope = scopeFactory.CreateAsyncScope();
-                var processor = scope.ServiceProvider.GetRequiredService<IOutboxProcessor>();
+                try
+                {
+                    await using var scope = scopeFactory.CreateAsyncScope();
+                    var processor = scope.ServiceProvider.GetRequiredService<IOutboxProcessor>();
 
-                await processor.ProcessBatchAsync(stoppingToken);
+                    await processor.ProcessBatchAsync(CancellationToken.None);
+                }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "Outbox processing failed");
+                }
             }
-            catch (Exception e) when (e is not OperationCanceledException)
-            {
-                logger.LogError(e, "Outbox processing failed");
-            }
+        }
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+            logger.LogInformation("Outbox worker stopped");
         }
     }
 }

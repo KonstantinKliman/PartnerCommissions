@@ -21,6 +21,9 @@ builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
 
 builder.Services.AddHostedService<OutboxWorker>();
 
+builder.Services.Configure<HostOptions>(opt =>
+    opt.ShutdownTimeout = TimeSpan.FromSeconds(30));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
