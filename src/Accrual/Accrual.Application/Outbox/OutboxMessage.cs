@@ -19,10 +19,15 @@ public class OutboxMessage
     public string? LastError { get; set; }
     
     public DateTimeOffset? ProcessedAt { get; set; }
+    
+    public DateTimeOffset? DeadLetteredAt { get; set; }
 
-    public static OutboxMessage Create<T>(string type, T payload) => new()
+    public static OutboxMessage Create<T>(string type, T payload)
     {
-        Type = type,
-        Payload = JsonSerializer.Serialize(payload)
-    };
+        return new OutboxMessage
+        {
+            Type = type,
+            Payload = JsonSerializer.Serialize(payload)
+        };
+    } 
 }

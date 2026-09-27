@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
+using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Outbox;
 
@@ -13,6 +15,15 @@ public class WalletsClient(HttpClient httpClient) : IWalletsClient
         using var response = await httpClient.PostAsJsonAsync(
             $"wallets/{Uri.EscapeDataString(message.BeneficiaryExternalId)}/credits", request, ct);
 
+        if ((int)response.StatusCode is >= 400 and < 500
+            && response.StatusCode is not HttpStatusCode.RequestTimeout
+            && response.StatusCode is not HttpStatusCode.TooManyRequests)
+        {
+            var body = await response.Content.ReadAsStringAsync(ct);
+            throw new PermanentDeliveryException(
+                $"Wallets rejected the credit with {(int)response.StatusCode}: {body}");
+        }
+        
         response.EnsureSuccessStatusCode();
     }
 }

@@ -17,12 +17,12 @@ public class AccrualDbContext(DbContextOptions<AccrualDbContext> options) : DbCo
     
     public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     
-    public async Task<List<OutboxMessage>> LockPendingOutboxMessagesAsync(int batchSize, int maxAttempts, CancellationToken ct)
+    public async Task<List<OutboxMessage>> LockPendingOutboxMessagesAsync(int batchSize, CancellationToken ct)
     {
         FormattableString query = $"""
                      SELECT * FROM outbox_messages
                      WHERE processed_at IS NULL
-                       AND attempts < {maxAttempts}
+                       AND dead_lettered_at IS NULL
                        AND next_attempt_at <= now()
                      ORDER BY next_attempt_at
                      LIMIT {batchSize}

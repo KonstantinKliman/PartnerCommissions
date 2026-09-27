@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Metrics;
 using Microsoft.Extensions.Logging;
@@ -18,31 +19,39 @@ public class OutboxProcessor(
     {
         await using var transaction = await context.Database.BeginTransactionAsync(ct);
 
-        var messages = await context.LockPendingOutboxMessagesAsync(BatchSize, MaxAttempts, ct);
+        var messages = await context.LockPendingOutboxMessagesAsync(BatchSize, ct);
 
         foreach (var message in messages)
         {
             try
             {
-                var payout = JsonSerializer.Deserialize<CommissionPayoutMessage>(message.Payload)!;
+                var payout = JsonSerializer.Deserialize<CommissionPayoutMessage>(message.Payload);
+                if (payout is null)
+                    throw new PermanentDeliveryException("Outbox message payload is empty.");
+
                 await payoutHandler.HandleAsync(payout, ct);
 
                 message.ProcessedAt = DateTimeOffset.UtcNow;
                 metrics.OutboxDelivered();
             }
+            catch (Exception ex) when (ex is PermanentDeliveryException or JsonException)
+            {
+                message.Attempts++;
+                message.LastError = ex.Message;
+                message.DeadLetteredAt = DateTimeOffset.UtcNow;
+
+                metrics.OutboxDeadLettered();
+                logger.LogError(ex, "Outbox message {MessageId} dead-lettered after a permanent failure", message.Id);
+            }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
                 message.Attempts++;
-                
-                metrics.OutboxFailed();
-                if (message.Attempts >= MaxAttempts)
-                    metrics.OutboxDeadLettered();
-                
                 message.LastError = ex.Message;
                 message.NextAttemptAt = DateTimeOffset.UtcNow
                     .AddSeconds(Math.Min(Math.Pow(2, message.Attempts), 300));
 
-                logger.LogWarning(ex, "Outbox message {MessageId} failed, attempt {Attempt}",
+                metrics.OutboxFailed();
+                logger.LogWarning(ex, "Outbox message {MessageId} failed, attempt {Attempt}, will retry",
                     message.Id, message.Attempts);
             }
         }

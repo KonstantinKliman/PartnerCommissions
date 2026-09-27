@@ -19,5 +19,5 @@ public interface IAccrualDbContext
     
     Task<int> SaveChangesAsync(CancellationToken ct);
     
-    Task<List<OutboxMessage>> LockPendingOutboxMessagesAsync(int batchSize, int maxAttempts, CancellationToken ct);
+    Task<List<OutboxMessage>> LockPendingOutboxMessagesAsync(int batchSize, CancellationToken ct);
 }

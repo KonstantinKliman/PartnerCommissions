@@ -17,6 +17,6 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
             .HasColumnType("jsonb");
 
         builder.HasIndex(m => m.NextAttemptAt)
-            .HasFilter("processed_at IS NULL");
+            .HasFilter("processed_at IS NULL AND dead_lettered_at IS NULL");
     }
 }
