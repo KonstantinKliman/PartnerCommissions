@@ -13,7 +13,6 @@ public class OutboxProcessor(
     AccrualMetrics metrics) : IOutboxProcessor
 {
     private const int BatchSize = 20;
-    private const int MaxAttempts = 10;
 
     public async Task ProcessBatchAsync(CancellationToken ct)
     {
