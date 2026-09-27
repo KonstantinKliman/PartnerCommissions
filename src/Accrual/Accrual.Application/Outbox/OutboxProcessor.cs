@@ -14,14 +14,24 @@ public class OutboxProcessor(
 {
     private const int BatchSize = 20;
 
-    public async Task ProcessBatchAsync(CancellationToken ct)
+    public async Task ProcessBatchAsync(CancellationToken  stoppingToken)
     {
+        var ct = CancellationToken.None;
+        
         await using var transaction = await context.Database.BeginTransactionAsync(ct);
 
         var messages = await context.LockPendingOutboxMessagesAsync(BatchSize, ct);
 
+        var processed = 0;
         foreach (var message in messages)
         {
+            if (stoppingToken.IsCancellationRequested)
+            {
+                logger.LogInformation("Outbox batch stopped on shutdown: {Processed} of {Total} messages processed",
+                    processed, messages.Count);
+                break;
+            }
+            
             try
             {
                 var payout = JsonSerializer.Deserialize<CommissionPayoutMessage>(message.Payload);
@@ -53,6 +63,8 @@ public class OutboxProcessor(
                 logger.LogWarning(ex, "Outbox message {MessageId} failed, attempt {Attempt}, will retry",
                     message.Id, message.Attempts);
             }
+
+            processed++;
         }
 
         await context.SaveChangesAsync(ct);

@@ -19,7 +19,7 @@ public class OutboxWorker(IServiceScopeFactory scopeFactory, ILogger<OutboxWorke
                     await using var scope = scopeFactory.CreateAsyncScope();
                     var processor = scope.ServiceProvider.GetRequiredService<IOutboxProcessor>();
 
-                    await processor.ProcessBatchAsync(CancellationToken.None);
+                    await processor.ProcessBatchAsync(stoppingToken);
                 }
                 catch (Exception e)
                 {

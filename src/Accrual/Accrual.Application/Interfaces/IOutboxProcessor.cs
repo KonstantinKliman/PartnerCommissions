@@ -2,5 +2,5 @@
 
 public interface IOutboxProcessor
 {
-    Task ProcessBatchAsync(CancellationToken ct);
+    Task ProcessBatchAsync(CancellationToken stoppingToken);
 }
