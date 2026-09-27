@@ -63,4 +63,15 @@ public class CommissionCalculatorTests
             Assert.Equal(SchemaType.Fibonacci, result[i].Schema);
         }
     }
+    
+    [Fact]
+    public void MaxProfit_TenLevels_DoesNotOverflowAndFitsColumn()
+    {
+        const decimal maxProfit = 99_999_999_999_999.9999m;
+
+        var result = CommissionCalculator.Calculate(maxProfit, Chain(10), SchemaType.Fibonacci);
+
+        Assert.Equal(10, result.Count);
+        Assert.All(result, c => Assert.True(c.Amount <= maxProfit));
+    }
 }

@@ -6,4 +6,4 @@ namespace Accrual.Api.Contracts;
 public sealed record CreateEventRequest(
     [Required, ExternalId] string ExternalId,
     [Required, ExternalId] string UserExternalId,
-    [Required, MaxDecimalPlaces(4)] decimal? Profit);
+    [Required, MoneyAmount] decimal? Profit);
