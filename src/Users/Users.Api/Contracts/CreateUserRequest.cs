@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Users.Api.Validation;
 
 namespace Users.Api.Contracts;
 
 public sealed record CreateUserRequest
 (
-    [Required, MaxLength(128)] string ExternalId, 
-    [MaxLength(128)] string? PartnerExternalId
+    [Required, ExternalId] string ExternalId, 
+    [ExternalId] string? PartnerExternalId
 );

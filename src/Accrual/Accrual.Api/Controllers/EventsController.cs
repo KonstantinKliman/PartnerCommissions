@@ -1,4 +1,5 @@
 ﻿using Accrual.Api.Contracts;
+using Accrual.Api.Validation;
 using Accrual.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ public class EventsController(IEventsService eventsService) : ControllerBase
     }
 
     [HttpGet("{externalId}")]
-    public async Task<IActionResult> GetEventByExternalId([FromRoute] string externalId, CancellationToken ct)
+    public async Task<IActionResult> GetEventByExternalId([FromRoute, ExternalId] string externalId, CancellationToken ct)
     {
         var result = await eventsService.GetEventByExternalIdAsync(externalId, ct);
         return Ok(result);

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Users.Api.Validation;
 using Wallets.Api.Contracts;
 using Wallets.Application.Interfaces;
 
@@ -11,7 +12,7 @@ public class WalletsController(IWalletsService walletsService) : ControllerBase
 {
     [HttpPost("{userExternalId}/credits")]
     public async Task<IActionResult> CreateCredit(
-        [FromRoute, MaxLength(128)] string userExternalId, 
+        [FromRoute, ExternalId] string userExternalId, 
         [FromBody] CreateCreditRequest request, 
         CancellationToken ct)
     {
@@ -24,7 +25,7 @@ public class WalletsController(IWalletsService walletsService) : ControllerBase
     }
     
     [HttpGet("{userExternalId}")]
-    public async Task<IActionResult> GetBalance([FromRoute, MaxLength(128)] string userExternalId, CancellationToken ct)
+    public async Task<IActionResult> GetBalance([FromRoute, ExternalId] string userExternalId, CancellationToken ct)
     {
         var result = await walletsService.GetBalanceAsync(userExternalId, ct);
         return Ok(result);
@@ -32,7 +33,7 @@ public class WalletsController(IWalletsService walletsService) : ControllerBase
 
     [HttpGet("{userExternalId}/credits")]
     public async Task<IActionResult> GetCredits(
-        [FromRoute, MaxLength(128)] string userExternalId,
+        [FromRoute, ExternalId] string userExternalId,
         [FromQuery] GetCreditsRequest request,
         CancellationToken ct)
     {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Users.Api.Contracts;
+using Users.Api.Validation;
 using Users.Application.Interfaces;
 
 namespace Users.Api.Controllers;
@@ -16,14 +17,16 @@ public class UsersController(IUsersService usersService) : ControllerBase
     }
 
     [HttpGet("{externalId}")]
-    public async Task<IActionResult> GetByExternalId([FromRoute] string externalId, CancellationToken ct)
+    public async Task<IActionResult> GetByExternalId([FromRoute, ExternalId] string externalId, CancellationToken ct)
     {
         var result = await usersService.GetByExternalIdAsync(externalId, ct);
         return Ok(result);
     }
 
     [HttpPut("{externalId}/partner")]
-    public async Task<IActionResult> SetPartner([FromRoute] string externalId, [FromBody] SetPartnerRequest request,
+    public async Task<IActionResult> SetPartner(
+        [FromRoute, ExternalId] string externalId, 
+        [FromBody] SetPartnerRequest request,
         CancellationToken ct)
     {
         await usersService.SetPartnerAsync(externalId, request.PartnerExternalId, ct);
@@ -31,14 +34,14 @@ public class UsersController(IUsersService usersService) : ControllerBase
     }
 
     [HttpGet("{externalId}/downline")]
-    public async Task<IActionResult> GetDownline([FromRoute] string externalId, CancellationToken ct)
+    public async Task<IActionResult> GetDownline([FromRoute, ExternalId] string externalId, CancellationToken ct)
     {
         var result = await usersService.GetDownlineAsync(externalId, ct);
         return Ok(result);
     }
 
     [HttpGet("{externalId}/upline")]
-    public async Task<IActionResult> GetUpline([FromRoute] string externalId, CancellationToken ct)
+    public async Task<IActionResult> GetUpline([FromRoute, ExternalId] string externalId, CancellationToken ct)
     {
         var result = await usersService.GetUplineAsync(externalId, ct);
         return Ok(result);
