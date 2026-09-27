@@ -15,6 +15,7 @@ public interface IUsersDbContext
 
     Task LockTreeAsync(CancellationToken ct);
     
-    Task<List<TreeNodeDto>> QueryDownlineAsync(Guid userId, int maxDepth, CancellationToken ct);
+    Task<List<TreeNodeDto>> QueryDownlineAsync(Guid userId, int maxDepth, int maxNodes, CancellationToken ct);
+    
     Task<List<TreeNodeDto>> QueryUplineAsync(Guid userId, int maxDepth, CancellationToken ct);
 }

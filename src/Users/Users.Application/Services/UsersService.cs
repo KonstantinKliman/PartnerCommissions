@@ -10,6 +10,7 @@ namespace Users.Application.Services;
 public class UsersService(IUsersDbContext context) : IUsersService
 {
     private const int MaxTreeDepth = 10;
+    private const int MaxDownlineNodes = 1000;
     
     public async Task<UserDto> CreateAsync(string externalId, string? partnerExternalId, CancellationToken ct)
     {
@@ -118,7 +119,7 @@ public class UsersService(IUsersDbContext context) : IUsersService
         if (userId is null)
             throw new NotFoundException($"User '{externalId}' not found.");
 
-        return await context.QueryDownlineAsync(userId.Value, MaxTreeDepth, ct);
+        return await context.QueryDownlineAsync(userId.Value, MaxTreeDepth, MaxDownlineNodes, ct);
     }
 
     public async Task<List<TreeNodeDto>> GetUplineAsync(string externalId, CancellationToken ct)

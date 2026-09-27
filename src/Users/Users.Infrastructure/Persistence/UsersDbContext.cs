@@ -38,7 +38,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
         return Database.ExecuteSqlAsync($"SELECT pg_advisory_xact_lock({TreeLockKey})", ct);
     }
 
-    public async Task<List<TreeNodeDto>> QueryDownlineAsync(Guid userId, int maxDepth, CancellationToken ct)
+    public async Task<List<TreeNodeDto>> QueryDownlineAsync(Guid userId, int maxDepth, int maxNodes, CancellationToken ct)
     {
         FormattableString query = $"""
                                    WITH RECURSIVE downline AS (
@@ -57,6 +57,7 @@ public class UsersDbContext(DbContextOptions<UsersDbContext> options) : DbContex
                                    SELECT external_id, partner_external_id, level
                                    FROM downline
                                    ORDER BY level, external_id
+                                   LIMIT {maxNodes}
                                    """;
 
         return await Database.SqlQuery<TreeNodeDto>(query).ToListAsync(ct);
