@@ -11,8 +11,8 @@ public class CommissionPayoutHandler(IAccrualDbContext context, IWalletsClient w
         await walletsClient.CreditAsync(message, ct);
 
         var commission = await context.Commissions
-            .SingleAsync(c => c.Id == message.CommissionId, ct);
-
+            .FirstAsync(c => c.Id == message.CommissionId, ct);
+        
         commission.PaidAt = DateTimeOffset.UtcNow;
     }
 }

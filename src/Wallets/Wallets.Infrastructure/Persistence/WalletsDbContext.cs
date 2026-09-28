@@ -24,7 +24,7 @@ public class WalletsDbContext(DbContextOptions<WalletsDbContext> options) : DbCo
         return await Wallets
             .Where(w => w.UserExternalId == userExternalId)
             .Select(w => w.Id)
-            .SingleAsync(ct);
+            .FirstAsync(ct);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
