@@ -25,6 +25,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Accrual.Domain.Tests/Accrual.Domain.Tests.csproj" />
+    <Project Path="tests/Accrual.IntegrationTests/Accrual.IntegrationTests.csproj" />
     <Project Path="tests/Users.IntegrationTests/Users.IntegrationTests.csproj" />
     <Project Path="tests/Wallets.IntegrationTests/Wallets.IntegrationTests.csproj" />
   </Folder>
