@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
-using Users.Api.Validation;
+﻿using Microsoft.AspNetCore.Mvc;
+using Shared.Validations;
 using Wallets.Api.Contracts;
 using Wallets.Application.Interfaces;
 

@@ -1,7 +1,7 @@
 ﻿using Accrual.Api.Contracts;
-using Accrual.Api.Validation;
 using Accrual.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Validations;
 
 namespace Accrual.Api.Controllers;
 

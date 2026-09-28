@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Shared.Validations;
 using Users.Api.Contracts;
-using Users.Api.Validation;
 using Users.Application.Interfaces;
 
 namespace Users.Api.Controllers;

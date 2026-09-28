@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Users.Api.Validation;
+namespace Shared.Validations;
 
 public sealed class ExternalIdAttribute() : RegularExpressionAttribute("^[A-Za-z0-9_-]{1,128}$")
 {

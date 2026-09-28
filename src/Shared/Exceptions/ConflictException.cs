@@ -1,4 +1,4 @@
-﻿namespace Accrual.Application.Exceptions;
+﻿namespace Shared.Exceptions;
 
 public class ConflictException : Exception
 {

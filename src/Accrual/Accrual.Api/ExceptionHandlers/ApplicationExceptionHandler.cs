@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
-using Accrual.Application.Exceptions;
+﻿using Accrual.Application.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
+using Shared.Exceptions;
 
 namespace Accrual.Api.ExceptionHandlers;
 

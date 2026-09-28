@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Outbox;
+using Shared.Exceptions;
 
 namespace Accrual.Infrastructure.Clients;
 

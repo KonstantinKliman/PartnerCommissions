@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Exceptions;
 using Wallets.Application.Dtos;
-using Wallets.Application.Exceptions;
 using Wallets.Application.Interfaces;
 using Wallets.Application.Mappings;
 using Wallets.Application.Metrics;

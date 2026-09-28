@@ -4,6 +4,7 @@ using Accrual.Application.Interfaces;
 using Accrual.Application.Metrics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Shared.Exceptions;
 
 namespace Accrual.Application.Outbox;
 

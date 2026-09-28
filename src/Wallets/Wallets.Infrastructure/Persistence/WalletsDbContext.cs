@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using Wallets.Application.Exceptions;
+using Shared.Exceptions;
 using Wallets.Application.Interfaces;
 using Wallets.Domain.Entities;
 

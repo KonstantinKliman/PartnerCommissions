@@ -1,9 +1,9 @@
-﻿using Accrual.Application.Exceptions;
-using Accrual.Application.Interfaces;
+﻿using Accrual.Application.Interfaces;
 using Accrual.Application.Outbox;
 using Accrual.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Shared.Exceptions;
 
 namespace Accrual.Infrastructure.Persistence;
 

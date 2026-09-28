@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Accrual.Api.Validation;
+using Shared.Validations;
 
 namespace Accrual.Api.Contracts;
 
