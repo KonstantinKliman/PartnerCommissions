@@ -25,5 +25,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Accrual.Domain.Tests/Accrual.Domain.Tests.csproj" />
+    <Project Path="tests/Users.IntegrationTests/Users.IntegrationTests.csproj" />
   </Folder>
 </Solution>
