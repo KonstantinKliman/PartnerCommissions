@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Shared.Exceptions;
 using Users.Application.Interfaces;
 using Users.Application.Dtos;
-using Users.Application.Exceptions;
 using Users.Domain.Entities;
 using Users.Domain.Exceptions;
 

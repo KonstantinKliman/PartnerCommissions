@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
+using Shared.Exceptions;
 using Users.Application.Dtos;
-using Users.Application.Exceptions;
 using Users.Application.Interfaces;
 using Users.Domain.Entities;
 

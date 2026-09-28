@@ -4,6 +4,7 @@ using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Polly.CircuitBreaker;
 using Polly.Timeout;
+using Shared.Exceptions;
 
 namespace Accrual.Infrastructure.Clients;
 

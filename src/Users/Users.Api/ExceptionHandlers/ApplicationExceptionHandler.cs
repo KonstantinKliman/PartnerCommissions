@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Users.Application.Exceptions;
+using Shared.Exceptions;
 using Users.Domain.Exceptions;
 
 namespace Users.Api.ExceptionHandlers;

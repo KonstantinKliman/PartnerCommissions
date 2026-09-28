@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Users.Api.Validation;
+﻿using Shared.Validations;
 
 namespace Users.Api.Contracts;
 

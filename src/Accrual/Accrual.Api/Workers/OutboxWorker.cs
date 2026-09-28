@@ -1,14 +1,17 @@
 ﻿using Accrual.Application.Interfaces;
+using Accrual.Application.Outbox;
+using Microsoft.Extensions.Options;
 
 namespace Accrual.Api.Workers;
 
-public class OutboxWorker(IServiceScopeFactory scopeFactory, ILogger<OutboxWorker> logger) : BackgroundService
+public class OutboxWorker(
+    IServiceScopeFactory scopeFactory, 
+    ILogger<OutboxWorker> logger,
+    IOptions<OutboxOptions> options) : BackgroundService
 {
-    private static readonly TimeSpan PollingInterval = TimeSpan.FromSeconds(5);
-    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var timer = new PeriodicTimer(PollingInterval);
+        using var timer = new PeriodicTimer(options.Value.PollingInterval);
         
         try
         {

@@ -1,11 +1,11 @@
 ﻿using Accrual.Application.Dtos;
-using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Mappings;
 using Accrual.Application.Metrics;
 using Accrual.Application.Outbox;
 using Accrual.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Shared.Exceptions;
 
 namespace Accrual.Application.Services;
 

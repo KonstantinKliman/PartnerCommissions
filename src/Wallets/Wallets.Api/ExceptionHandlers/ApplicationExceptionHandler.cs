@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Wallets.Application.Exceptions;
+using Shared.Exceptions;
 
 namespace Wallets.Api.ExceptionHandlers;
 

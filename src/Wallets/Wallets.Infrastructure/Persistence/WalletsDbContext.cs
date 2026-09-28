@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Npgsql;
-using Wallets.Application.Exceptions;
+using Shared.Exceptions;
 using Wallets.Application.Interfaces;
 using Wallets.Domain.Entities;
 
@@ -24,7 +24,7 @@ public class WalletsDbContext(DbContextOptions<WalletsDbContext> options) : DbCo
         return await Wallets
             .Where(w => w.UserExternalId == userExternalId)
             .Select(w => w.Id)
-            .SingleAsync(ct);
+            .FirstAsync(ct);
     }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
