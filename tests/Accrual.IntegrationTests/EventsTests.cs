@@ -23,14 +23,22 @@ public class EventsTests(AccrualApiFactory factory) : IClassFixture<AccrualApiFa
 
     private async Task<EventResponse> GetEventAsync(string eventId)
     {
-        return (await _client.GetFromJsonAsync<EventResponse>($"events/{eventId}"))!;
+        var response = await _client.GetFromJsonAsync<EventResponse>($"events/{eventId}");
+        return response!;
     }
-        
-
+    
     private async Task SetSchemaAsync(string schemaType)
     {
         var response = await _client.PutAsJsonAsync("admin/schema", new { schemaType });
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+    }
+    
+    private async Task<string> CreateEventAsync(string userId, decimal profit)
+    {
+        var eventId = NewEventId();
+        var response = await PostEventAsync(eventId, userId, profit);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        return eventId;
     }
 
     [Fact]
@@ -130,5 +138,25 @@ public class EventsTests(AccrualApiFactory factory) : IClassFixture<AccrualApiFa
         Assert.Single(statuses, s => s == HttpStatusCode.Created);
         Assert.Equal(9, statuses.Count(s => s == HttpStatusCode.OK));
         Assert.Equal(2, (await GetEventAsync(eventId)).Commissions.Count);
+    }
+    
+    [Fact]
+    public async Task SetSchema_AffectsOnlyNewEvents()
+    {
+        var userId = NewUserId();
+        factory.Users.SetUpline(userId, NewUserId(), NewUserId(), NewUserId());
+
+        await SetSchemaAsync("Linear");
+        var linearEventId = await CreateEventAsync(userId, 1000m);
+        await SetSchemaAsync("Fibonacci");
+        var fibonacciEventId = await CreateEventAsync(userId, 1000m);
+
+        var linear = (await GetEventAsync(linearEventId)).Commissions.OrderBy(c => c.Level).ToList();
+        var fibonacci = (await GetEventAsync(fibonacciEventId)).Commissions.OrderBy(c => c.Level).ToList();
+
+        Assert.Equal(new[] { 10m, 20m, 30m }, linear.Select(c => c.Amount));
+        Assert.All(linear, c => Assert.Equal("Linear", c.SchemaType));
+        Assert.Equal(new[] { 10m, 10m, 20m }, fibonacci.Select(c => c.Amount));
+        Assert.All(fibonacci, c => Assert.Equal("Fibonacci", c.SchemaType));
     }
 }
