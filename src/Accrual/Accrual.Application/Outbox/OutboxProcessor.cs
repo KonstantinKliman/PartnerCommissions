@@ -57,7 +57,7 @@ public class OutboxProcessor(
                 message.Attempts++;
                 message.LastError = ex.Message;
 
-                var delaySeconds = Math.Min(Math.Pow(2, message.Attempts), options.Value.MaxRetryDelay.Seconds);
+                var delaySeconds = Math.Min(Math.Pow(2, message.Attempts), options.Value.MaxRetryDelay.TotalSeconds);
                 
                 message.NextAttemptAt = DateTimeOffset.UtcNow
                     .AddSeconds(delaySeconds);
