@@ -3,6 +3,7 @@ using Accrual.Application.Exceptions;
 using Accrual.Application.Interfaces;
 using Accrual.Application.Metrics;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Accrual.Application.Outbox;
 
@@ -10,17 +11,16 @@ public class OutboxProcessor(
     IAccrualDbContext context,
     ICommissionPayoutHandler payoutHandler,
     ILogger<OutboxProcessor> logger,
-    AccrualMetrics metrics) : IOutboxProcessor
+    AccrualMetrics metrics,
+    IOptions<OutboxOptions> options) : IOutboxProcessor
 {
-    private const int BatchSize = 20;
-
     public async Task ProcessBatchAsync(CancellationToken  stoppingToken)
     {
         var ct = CancellationToken.None;
         
         await using var transaction = await context.Database.BeginTransactionAsync(ct);
 
-        var messages = await context.LockPendingOutboxMessagesAsync(BatchSize, ct);
+        var messages = await context.LockPendingOutboxMessagesAsync(options.Value.BatchSize, ct);
 
         var processed = 0;
         foreach (var message in messages)
@@ -56,8 +56,11 @@ public class OutboxProcessor(
             {
                 message.Attempts++;
                 message.LastError = ex.Message;
+
+                var delaySeconds = Math.Min(Math.Pow(2, message.Attempts), options.Value.MaxRetryDelay.Seconds);
+                
                 message.NextAttemptAt = DateTimeOffset.UtcNow
-                    .AddSeconds(Math.Min(Math.Pow(2, message.Attempts), 300));
+                    .AddSeconds(delaySeconds);
 
                 metrics.OutboxFailed();
                 logger.LogWarning(ex, "Outbox message {MessageId} failed, attempt {Attempt}, will retry",
