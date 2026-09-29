@@ -159,4 +159,12 @@ public class EventsTests(AccrualApiFactory factory) : IClassFixture<AccrualApiFa
         Assert.Equal(new[] { 10m, 10m, 20m }, fibonacci.Select(c => c.Amount));
         Assert.All(fibonacci, c => Assert.Equal("Fibonacci", c.SchemaType));
     }
+    
+    [Fact]
+    public async Task CreateEvent_InvalidExternalId_Returns400()
+    {
+        var response = await PostEventAsync("bad id!", NewUserId(), 1000m);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
 }
