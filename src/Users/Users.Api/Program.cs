@@ -2,13 +2,14 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using Users.Api.Endpoints;
 using Users.Api.ExceptionHandlers;
 using Users.Application;
 using Users.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddValidation();
 builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
@@ -46,7 +47,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-app.MapControllers();
+app.MapUsersEndpoints();
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions()
 {
