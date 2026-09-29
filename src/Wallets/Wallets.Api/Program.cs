@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using Wallets.Api.Endpoints;
 using Wallets.Api.ExceptionHandlers;
 using Wallets.Application;
 using Wallets.Application.Metrics;
@@ -12,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<ApplicationExceptionHandler>();
 
-builder.Services.AddControllers();
+builder.Services.AddValidation();
 builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
@@ -48,6 +49,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
+app.MapWalletsEndpoints();
+
 app.MapHealthChecks("/health/live", new HealthCheckOptions()
 {
     Predicate = _ => false,
@@ -57,7 +60,5 @@ app.MapHealthChecks("/health/ready", new HealthCheckOptions()
 {
     Predicate = check => check.Tags.Contains("ready")
 });
-
-app.MapControllers();
 
 app.Run();
