@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Accrual.Api.Endpoints;
 using Accrual.Api.ExceptionHandlers;
 using Accrual.Api.Workers;
 using Accrual.Application;
@@ -11,9 +12,9 @@ using OpenTelemetry.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(
-        new JsonStringEnumConverter(allowIntegerValues: false)));
+builder.Services.ConfigureHttpJsonOptions(o =>
+    o.SerializerOptions.Converters.Add(new JsonStringEnumConverter(allowIntegerValues: false)));
+builder.Services.AddValidation();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
@@ -60,7 +61,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-app.MapControllers();
+app.MapEventsEndpoints();
+app.MapSchemaEndpoints();
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions()
 {
